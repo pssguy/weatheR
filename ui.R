@@ -38,13 +38,13 @@ dashboardPage(
     
     box(
       status = "success", solidHeader = TRUE,
-      title = "Map",
+      title = "Click on circle for Station Name and Monthly Temperature Chart",
       leafletOutput("locations")
       
     ),
     box(
       status = "success", solidHeader = TRUE,
-      title = "Chart",
+      title = "Click on Point  for Daiy Data",
       ggvisOutput("monthly")
       
     )

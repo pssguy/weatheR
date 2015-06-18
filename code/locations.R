@@ -34,10 +34,17 @@ observe({
   stationName <-input$locations_shape_click$id
   print(stationName)
   
-  met_data <- get_ncdc_station_data(station_id = "13860-99999",
-                                    startyear = 2009,
-                                    endyear = 2010)
+  USAF <- allStations[allStations$NAME==stationName,]$USAF
+  WBAN <- allStations[allStations$NAME==stationName,]$WBAN
   
+  loc <- paste0(USAF,"-",WBAN)
+  
+  met_data <- get_ncdc_station_data(station_id = loc,
+                                    startyear = 2014,
+                                    endyear = 2015)
+  
+  print(length(met_data)==0) 
+  if (length(met_data)==0) return()
   met_data %>% 
     group_by(year) %>% 
     mutate(dayOfYear=row_number()) %>% 
@@ -47,7 +54,7 @@ observe({
   monthlyAv %>% 
     group_by(year) %>% 
     ggvis(~month,~ mean) %>% 
-    #layer_points(fill =~as.character(year))
+    layer_points() %>% 
     layer_lines(stroke =~as.character(year)) %>% 
     bind_shiny("monthly")
   
