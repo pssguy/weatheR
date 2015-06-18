@@ -41,6 +41,12 @@ dashboardPage(
       title = "Map",
       leafletOutput("locations")
       
+    ),
+    box(
+      status = "success", solidHeader = TRUE,
+      title = "Chart",
+      ggvisOutput("monthly")
+      
     )
   )
       )
