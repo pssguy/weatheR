@@ -10,7 +10,7 @@ dashboardPage(
     menuItem("Maps", tabName = "maps",icon = icon("map-marker")),
  
 #   menuItem("Data", tabName = "data",icon = icon("database")),
-#   menuItem("Info", tabName = "info",icon = icon("info")),
+  menuItem("Info", tabName = "info",icon = icon("info")),
 #   
 #   menuItem("Code",icon = icon("code-fork"),
 #            href = "https://github.com/pssguy/fortune500"),
@@ -35,21 +35,40 @@ dashboardPage(
       tabItem("maps",
   fluidRow(
     
+    column(width=6,
     
-    box(
+    box(width=12,
       status = "success", solidHeader = TRUE,
       title = "Click on circle for Station Name and Monthly Temperature Chart",
       leafletOutput("locations")
       
+    )
     ),
-    box(
+    column(width=6,
+    box(width=12,
       status = "success", solidHeader = TRUE,
-      title = "Click on Point  for Daiy Data",
+      title = "Click on Point  for Daily Data",
+      collapsible = TRUE, collapsed = FALSE,
       ggvisOutput("monthly")
       
+    ),
+    box(width=12,
+        status = "success", solidHeader = TRUE,
+        title = "Click on Point  for Hourly Data",
+        collapsible = TRUE, collapsed = TRUE,
+        ggvisOutput("daily")
+        
+    ),
+    box(width=12,
+        status = "success", solidHeader = TRUE,
+        title = "Hourly Data",
+        collapsible = TRUE, collapsed = TRUE,
+        ggvisOutput("daily")
+        
+    )
     )
   )
-      )
+      ),
 
 # tabItem("data",
 #           fluidRow(
@@ -65,7 +84,7 @@ dashboardPage(
 #             ))
 #         ),
 # 
-# tabItem("info",includeMarkdown("info.md"))
+ tabItem("info",includeMarkdown("info.md"))
 
 ) 
        
