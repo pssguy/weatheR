@@ -1,10 +1,24 @@
+# Set up reactive values initially as null
+values <- reactiveValues()
+
 # function to get Season data from graph and apply to table
-getMonth = function(data,location,session){
+
+getHour = function(data,location,session){
+  
+  if(is.null(data)) return(NULL)
+  #   
+  values$theDay <- data$day
+  print(values$theDay)
+  print(values$theMonth)
+}
+
+
+getDay = function(data,location,session){
   
    if(is.null(data)) return(NULL)
 #   
-    theMonth <- data$month
-    theYear <- data$year
+    values$theMonth <- data$month
+    values$theYear <- data$year
 #    
 #    print(theMonth)
 #    print(theYear)
@@ -13,11 +27,11 @@ getMonth = function(data,location,session){
    
       observe({
          print("theMonth")
-  print(theMonth)
+  print(values$theMonth)
  # print(glimpse(theData()$met_data))
   
   theData()$met_data %>% 
-    filter(year==theYear&month==theMonth) %>% 
+    filter(year==values$theYear&month==values$theMonth) %>% 
     group_by(day) %>% 
     summarize(min=min(temp, na.rm=T),max=max(temp, na.rm=T), mean=round(mean(temp, na.rm=T),1)) -> dailyAv
   
@@ -35,6 +49,8 @@ getMonth = function(data,location,session){
     add_legend(scales="stroke",title="") %>% 
     add_axis("y", title="temp C") %>% 
     add_axis("x", title="Day of Month") %>% 
+    handle_click(getHour) %>% 
+    set_options(width=480) %>% 
     bind_shiny("daily")
   
   #ERROR: [on_request_read] connection reset by peer
@@ -140,7 +156,7 @@ observe({
       layer_points() %>% 
       layer_lines(stroke =~as.character(year)) %>% 
       add_legend(scales="stroke",title="") %>% 
-      handle_click(getMonth) %>% 
+      handle_click(getDay) %>% 
       set_options(width=480) %>% 
       bind_shiny("monthly")
   
