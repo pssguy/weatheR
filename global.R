@@ -30,3 +30,4 @@ allStations$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
                              allStations$begin,
                              allStations$end)
 
+countryChoice <- sort(unique(allStations$country_name))

@@ -1,10 +1,12 @@
 
 dashboardPage(skin="red",
-              dashboardHeader(title = img(src="logo.jpg", height = 50, align = "left")),
+             # dashboardHeader(title = img(src="logo.jpg", height = 50, align = "left")),
+              dashboardHeader(title = "Weather"),
   
     dashboardSidebar(
 #       sliderInput("count","",min=1,max=1000,value=c(1,1000),step=10, ticks=FALSE),
 #       uiOutput("industries"),
+      selectInput("country","Select Country",countryChoice, selected="Norway"),
  
   sidebarMenu(
     menuItem("Maps", tabName = "maps",icon = icon("map-marker")),
@@ -48,15 +50,17 @@ dashboardPage(skin="red",
     column(width=6,
     box(width=12,
       status = "success", solidHeader = TRUE,
-      title = "Click on Point  for Daily Data",
+      title = "Monthly Temperatures - Click on Point  for Daily Data",
       collapsible = TRUE, collapsed = FALSE,
-      ggvisOutput("monthly")
+     
+     ggvisOutput("monthly")
       
     ),
     box(width=12,
         status = "success", solidHeader = TRUE,
-        title = "Click on Point  for Hourly Data",
-        collapsible = TRUE, collapsed = TRUE,
+        title = "Daily Temperatures - Click on Point  for Hourly Data",
+        collapsible = TRUE, collapsed = FALSE,
+        #textOutput("dailyText")
         ggvisOutput("daily")
         
     ),
