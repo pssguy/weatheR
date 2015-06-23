@@ -1,6 +1,6 @@
 
-dashboardPage(
-  dashboardHeader(title = "Weather"),
+dashboardPage(skin="red",
+              dashboardHeader(title = img(src="logo.jpg", height = 50, align = "left")),
   
     dashboardSidebar(
 #       sliderInput("count","",min=1,max=1000,value=c(1,1000),step=10, ticks=FALSE),
@@ -16,7 +16,8 @@ dashboardPage(
 #            href = "https://github.com/pssguy/fortune500"),
 #   
   menuItem("Other Dashboards",
-          # menuSubItem("Fortune 500",href = "https://mytinyshinys.shinyapps.io/fortune500"),
+           menuSubItem("MLB",href = "https://mytinyshinys.shinyapps.io/mlbCharts"),
+           menuSubItem("Fortune 500",href = "https://mytinyshinys.shinyapps.io/fortune500"),
            menuSubItem("WikiGuardian",href = "https://mytinyshinys.shinyapps.io/wikiGuardian"),
            menuSubItem("World Soccer",href = "https://mytinyshinys.shinyapps.io/worldSoccer")
            
@@ -63,7 +64,7 @@ dashboardPage(
         status = "success", solidHeader = TRUE,
         title = "Hourly Data",
         collapsible = TRUE, collapsed = TRUE,
-        ggvisOutput("daily")
+        ggvisOutput("hourly")
         
     )
     )
