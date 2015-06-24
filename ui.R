@@ -5,13 +5,11 @@ dashboardPage(skin="red",
   
     dashboardSidebar(
       includeCSS("custom.css"),
-     inputPanel(id="ip",
-      selectInput("country","Select Country",countryChoice, selected="Canada"),
-      radioButtons("tempScale","",c("Celsius","Fahrenheit"),inline= TRUE)
-     ),
+       uiOutput("sb"),
  
-  sidebarMenu(
+  sidebarMenu(id="sbMenu",
     menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker")),
+    menuItem("Earthquakes",tabName= "earthquakes"),
  
 #   menuItem("Data", tabName = "data",icon = icon("database")),
   menuItem("Info", tabName = "info",icon = icon("info")),
@@ -41,16 +39,39 @@ dashboardPage(skin="red",
   fluidRow(
     
     column(width=6,
-    
+           box(width=12,
+               status = "success", solidHeader = TRUE,
+               title = "Click on circle for Station Name and Monthly Temperature Chart",
+               leafletOutput("locations")
+               
+           ),
     box(width=12,
       status = "success", solidHeader = TRUE,
-      title = "Click on circle for Station Name and Monthly Temperature Chart",
-      leafletOutput("locations")
+      title = "Annual Averages, Highs and Lows",
+      DT::dataTableOutput("hotColdTable")
       
+    ),
+    box(width=12,
+        status = "success", solidHeader = TRUE,
+        title = "Days below OC and above 20C - Year to Date",
+        plotOutput("hotColdChart")
+        
+    
     )
     ),
     column(width=6,
+           box(width=12,
+                       
+                       status = "warning", solidHeader = TRUE,
+                       title = "Select Years Required. There may be missing data",
+                       collapsible = TRUE, collapsed = FALSE,
+                       uiOutput("a")
+#sliderInput("years","Select Years",min=2000,max=2015,value=c(2012,2015),sep="",ticks=FALSE)
+    ),
+                       
+           
     box(width=12,
+
       status = "success", solidHeader = TRUE,
       title = "Monthly Temperatures - Click on Point  for Daily Data",
       collapsible = TRUE, collapsed = FALSE,

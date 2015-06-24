@@ -11,6 +11,7 @@ library(shinydashboard)
 library(htmlwidgets)
 library(DT)
 library(stringr)
+library(ggplot2)
 
 # load requisite files
 #allStations <- read.csv("allStations_B.csv", stringsAsFactors = F)
@@ -31,3 +32,25 @@ allStations$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
                              allStations$end)
 
 countryChoice <- sort(unique(allStations$country_name))
+
+## container for temperature table
+temp_format = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan = 1, ''),
+      th(colspan = 2, 'Maximum',align='center'),
+      th(colspan = 2, 'Minimum'),
+      th(colspan = 2, 'Average')
+      
+    ),
+    tr(
+      th('Year'),
+      th('Date'),
+      th('Temp'),
+      th('Date'),
+      th('Temp'),
+      th('Year'),
+      th('YTD') 
+    )
+  )
+))
