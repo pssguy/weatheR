@@ -4,12 +4,14 @@ dashboardPage(skin="red",
               dashboardHeader(title = "Weather"),
   
     dashboardSidebar(
-#       sliderInput("count","",min=1,max=1000,value=c(1,1000),step=10, ticks=FALSE),
-#       uiOutput("industries"),
-      selectInput("country","Select Country",countryChoice, selected="Norway"),
+      includeCSS("custom.css"),
+     inputPanel(id="ip",
+      selectInput("country","Select Country",countryChoice, selected="Canada"),
+      radioButtons("tempScale","",c("Celsius","Fahrenheit"),inline= TRUE)
+     ),
  
   sidebarMenu(
-    menuItem("Maps", tabName = "maps",icon = icon("map-marker")),
+    menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker")),
  
 #   menuItem("Data", tabName = "data",icon = icon("database")),
   menuItem("Info", tabName = "info",icon = icon("info")),
@@ -35,7 +37,7 @@ dashboardPage(skin="red",
     
   dashboardBody( 
     tabItems(
-      tabItem("maps",
+      tabItem("stations",
   fluidRow(
     
     column(width=6,
@@ -60,14 +62,13 @@ dashboardPage(skin="red",
         status = "success", solidHeader = TRUE,
         title = "Daily Temperatures - Click on Point  for Hourly Data",
         collapsible = TRUE, collapsed = FALSE,
-        #textOutput("dailyText")
         ggvisOutput("daily")
         
     ),
     box(width=12,
         status = "success", solidHeader = TRUE,
         title = "Hourly Data",
-        collapsible = TRUE, collapsed = TRUE,
+        collapsible = TRUE, collapsed = FALSE,
         ggvisOutput("hourly")
         
     )
