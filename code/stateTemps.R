@@ -73,26 +73,28 @@ if(input$tempScale2=="Fahrenheit"){
   
 }
 
-# capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
-#                         <th>%3$s</th></tr>
-#                             
-#                             <tr align='center'><td>%1$s, %2$s</td></tr>
-#                             <tr align='center'><td>%4$s</td></tr>
-# 
-#                             
-#                             </table>",
-#                           capitals$city,
-#                           capitals$state,
-#                           capitals$temp,
-#                           capitals$Time)
-
-#print(capitals$popup)
-
+  # Create a continuous palette function
+  ## works but is faded dark blue to virtually white not what is wanted
+#   pal <- colorNumeric(
+#     palette = "Blues",
+#     domain = capitals$temp
+#   )
+  
+  ## again works but bit too mauvy
+  pal <- colorNumeric(
+    palette = c("navy","red"),
+    domain = capitals$temp
+  )
+  
+#  binpal <- colorBin(c("navy","red"), capitals$temp, 6, pretty = FALSE)
+  binpal <- colorBin(c("#0000FF","#0080FF","#00FFFF","#FFFF00","#FF8000","#FF0000"), capitals$temp, 6, pretty = FALSE)
+  print(binpal)
+  
 capitals %>% 
   leaflet() %>% 
-  setView(lng = -112, lat = 41, zoom = 2) %>% 
+  setView(lng = -112, lat = 41, zoom = 3) %>% 
   addTiles() %>% 
-  addCircles(popup = ~popup)
+  addCircles(popup = ~popup, color = ~binpal(temp), opacity=0.9)
 
 })
 
@@ -118,7 +120,7 @@ output$stateTempsTable <- DT::renderDataTable({
   capitals %>% 
     arrange(desc(temp)) %>% 
     select(city,state,temp,time) %>% 
-    DT::datatable(container=stateTemp_format,options=list(paging = TRUE, searching = FALSE,info=FALSE,
+    DT::datatable(container=stateTemp_format,options=list(paging = TRUE, searching = TRUE,info=FALSE,
 columnDefs = list(list(className = 'dt-right', targets = c(3,4)))))
  #DT::datatable(options=list(paging = TRUE, searching = TRUE,info=FALSE))                                                                  
   
