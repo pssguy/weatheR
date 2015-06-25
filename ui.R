@@ -1,7 +1,7 @@
 
 dashboardPage(skin="red",
              # dashboardHeader(title = img(src="logo.jpg", height = 50, align = "left")),
-              dashboardHeader(title = "Weather"),
+              dashboardHeader(title = "Climate"),
   
     dashboardSidebar(
       includeCSS("custom.css"),
@@ -123,7 +123,7 @@ tabItem("statetemps",
         ),
         box(
           status = "success", solidHeader = TRUE,
-          title = "",
+          title = "Refreshes automatically every 10 minutes",
           collapsible = FALSE, collapsed = FALSE,
           DT::dataTableOutput("stateTempsTable")
           

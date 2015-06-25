@@ -64,9 +64,15 @@ stateCapitals <- read_csv("stateCapitals.csv")
 capitals <- read_csv("capitals.csv")
 
 
-# capitals <- us %>% 
-#   right_join(stateCapitals,by=c("city"="Capitals")) %>%  #77
-#   group_by(city) %>% 
-#   slice(1) %>% #51 and still some tidying u to do
-#   filter(!is.na(iata_faa)) %>% 
-#   filter(iata_faa!="")
+stateTemp_format = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan = 1, 'Rank'),
+      th(colspan = 1, 'City'),
+      th(colspan = 1, 'State'),
+      th(colspan = 1, 'Temperature'),
+      th(colspan = 1, 'Local')
+      
+    )
+  )
+))

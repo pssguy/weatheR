@@ -1,6 +1,10 @@
 
-#output$stateTemps <- renderLeaflet({
+
 theData <- reactive({
+  
+  # repoll every 10 minutes
+  invalidateLater(600000, session)
+  
 for (i in 1:nrow(capitals)) {
   print(i)
   tempDF <- getCurrentTemperature(station = capitals$iata_faa[i])
@@ -18,6 +22,10 @@ for (i in 1:nrow(capitals)) {
 
 capitals <- cbind(capitals,df)
 print(glimpse(capitals))
+print(capitals$Time[1])
+
+capitals <- capitals %>% 
+  mutate(time=str_sub(Time,12,16))
 
 
 info=list(capitals=capitals)
@@ -44,14 +52,14 @@ if(input$tempScale2=="Fahrenheit"){
                             capitals$city,
                             capitals$state,
                             capitals$temp,
-                            capitals$Time)
+                            capitals$time)
   
 } else{
   capitals <- theData()$capitals %>% 
     mutate(temp=TemperatureC)
   
   capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
-                        <th>%3$s </th></tr>
+                        <th>%3$s C </th></tr>
                             
                             <tr align='center'><td>%1$s, %2$s</td></tr>
                             <tr align='center'><td>%4$s</td></tr>
@@ -61,27 +69,28 @@ if(input$tempScale2=="Fahrenheit"){
                             capitals$city,
                             capitals$state,
                             capitals$temp,
-                            capitals$Time)
+                            capitals$time)
   
 }
 
-capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
-                        <th>%3$s</th></tr>
-                            
-                            <tr align='center'><td>%1$s, %2$s</td></tr>
-                            <tr align='center'><td>%4$s</td></tr>
+# capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
+#                         <th>%3$s</th></tr>
+#                             
+#                             <tr align='center'><td>%1$s, %2$s</td></tr>
+#                             <tr align='center'><td>%4$s</td></tr>
+# 
+#                             
+#                             </table>",
+#                           capitals$city,
+#                           capitals$state,
+#                           capitals$temp,
+#                           capitals$Time)
 
-                            
-                            </table>",
-                          capitals$city,
-                          capitals$state,
-                          capitals$temp,
-                          capitals$Time)
-
-print(capitals$popup)
+#print(capitals$popup)
 
 capitals %>% 
   leaflet() %>% 
+  setView(lng = -112, lat = 41, zoom = 2) %>% 
   addTiles() %>% 
   addCircles(popup = ~popup)
 
@@ -99,10 +108,18 @@ output$stateTempsTable <- DT::renderDataTable({
       mutate(temp=TemperatureC)
   }
     
+ ## trying to discover why container does not print correctly? row.numbers withTags?
+#    print(capitals$time)
+#   
+#   capitals[is.na(capitals$time),]$time <- "00:00"
+#   print(capitals$time)
+#   print(class(capitals$time)) #character
+#   
   capitals %>% 
     arrange(desc(temp)) %>% 
-    select(city,state,temp,Time) %>% 
-    DT::datatable(options=list(paging = TRUE, searching = FALSE,info=FALSE))
-                                                                    
+    select(city,state,temp,time) %>% 
+    DT::datatable(container=stateTemp_format,options=list(paging = TRUE, searching = FALSE,info=FALSE,
+columnDefs = list(list(className = 'dt-right', targets = c(3,4)))))
+ #DT::datatable(options=list(paging = TRUE, searching = TRUE,info=FALSE))                                                                  
   
 })
