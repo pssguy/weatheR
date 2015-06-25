@@ -9,8 +9,9 @@ shinyServer(function(input, output,session) {
                  selectInput("country","Select Country",countryChoice, selected="Canada"),
                  radioButtons("tempScale","",c("Celsius","Fahrenheit"),inline= TRUE)
       ) 
-    } else {
-    }
+    } else if (input$sbMenu=="statetemps") {
+      radioButtons("tempScale2","Select Scale",c("Celsius","Fahrenheit"),selected="Fahrenheit",inline= TRUE)
+         }
     
   })
 

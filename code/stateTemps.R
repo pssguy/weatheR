@@ -1,5 +1,6 @@
 
-output$stateTemps <- renderLeaflet({
+#output$stateTemps <- renderLeaflet({
+theData <- reactive({
 for (i in 1:nrow(capitals)) {
   print(i)
   tempDF <- getCurrentTemperature(station = capitals$iata_faa[i])
@@ -16,19 +17,65 @@ for (i in 1:nrow(capitals)) {
 
 
 capitals <- cbind(capitals,df)
+print(glimpse(capitals))
 
-print(capitals$TemperatureC)
-capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
-                        <th>%1$s, %2$s</th></tr>
+
+info=list(capitals=capitals)
+return(info)
+
+})
+
+output$stateTempsMap <- renderLeaflet({
+
+  if(is.null(input$tempScale2)) return()
+  
+if(input$tempScale2=="Fahrenheit"){
+  capitals <- theData()$capitals %>% 
+    mutate(temp=round(TemperatureC*9/5+32),0)
+  
+  capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
+                        <th>%3$s F</th></tr>
                             
-                            <tr align='center'><td>%3$s</td></tr>
+                            <tr align='center'><td>%1$s, %2$s</td></tr>
+                            <tr align='center'><td>%4$s</td></tr>
+
+                            
+                            </table>",
+                            capitals$city,
+                            capitals$state,
+                            capitals$temp,
+                            capitals$Time)
+  
+} else{
+  capitals <- theData()$capitals %>% 
+    mutate(temp=TemperatureC)
+  
+  capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
+                        <th>%3$s </th></tr>
+                            
+                            <tr align='center'><td>%1$s, %2$s</td></tr>
+                            <tr align='center'><td>%4$s</td></tr>
+
+                            
+                            </table>",
+                            capitals$city,
+                            capitals$state,
+                            capitals$temp,
+                            capitals$Time)
+  
+}
+
+capitals$popup <- sprintf("<table cellpadding='4' style='line-height:1'><tr>
+                        <th>%3$s</th></tr>
+                            
+                            <tr align='center'><td>%1$s, %2$s</td></tr>
                             <tr align='center'><td>%4$s</td></tr>
 
                             
                             </table>",
                           capitals$city,
                           capitals$state,
-                          capitals$TemperatureC,
+                          capitals$temp,
                           capitals$Time)
 
 print(capitals$popup)
@@ -38,4 +85,24 @@ capitals %>%
   addTiles() %>% 
   addCircles(popup = ~popup)
 
+})
+
+output$stateTempsTable <- DT::renderDataTable({
+  
+  if(is.null(input$tempScale2)) return()
+  
+  if(input$tempScale2=="Fahrenheit"){
+    capitals <- theData()$capitals %>% 
+      mutate(temp=round(TemperatureC*9/5+32),0)
+  } else {
+    capitals <- theData()$capitals %>% 
+      mutate(temp=TemperatureC)
+  }
+    
+  capitals %>% 
+    arrange(desc(temp)) %>% 
+    select(city,state,temp,Time) %>% 
+    DT::datatable(options=list(paging = TRUE, searching = FALSE,info=FALSE))
+                                                                    
+  
 })

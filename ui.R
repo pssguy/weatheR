@@ -116,11 +116,20 @@ dashboardPage(skin="red",
 tabItem("statetemps",
         box(
             status = "success", solidHeader = TRUE,
-            title = "Latest Temps - Click for value",
+            title = "Latest Temps (takes few seconds to compile) - Click for value",
             collapsible = FALSE, collapsed = FALSE,
-            leafletOutput("stateTemps")
+            leafletOutput("stateTempsMap")
             
-        )),
+        ),
+        box(
+          status = "success", solidHeader = TRUE,
+          title = "",
+          collapsible = FALSE, collapsed = FALSE,
+          DT::dataTableOutput("stateTempsTable")
+          
+        )
+        
+        ),
  tabItem("info",includeMarkdown("info.md"))
 
 ) 
