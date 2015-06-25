@@ -15,6 +15,7 @@ shinyServer(function(input, output,session) {
   })
 
   source("code/locations.R", local=TRUE)
+  source("code/stateTemps.R", local=TRUE)
   
   
   

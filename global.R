@@ -54,3 +54,19 @@ temp_format = htmltools::withTags(table(
     )
   )
 ))
+
+## state temps will need revision
+
+airports <- read_csv("airports.csv")  ## worldwide 6208
+us <- subset(airports,country=="United States")
+stateCapitals <- read_csv("stateCapitals.csv")
+
+capitals <- read_csv("capitals.csv")
+
+
+# capitals <- us %>% 
+#   right_join(stateCapitals,by=c("city"="Capitals")) %>%  #77
+#   group_by(city) %>% 
+#   slice(1) %>% #51 and still some tidying u to do
+#   filter(!is.na(iata_faa)) %>% 
+#   filter(iata_faa!="")

@@ -8,8 +8,10 @@ dashboardPage(skin="red",
        uiOutput("sb"),
  
   sidebarMenu(id="sbMenu",
-    menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker")),
-    menuItem("Earthquakes",tabName= "earthquakes"),
+              menuItem("State Capital Temperatures",tabName= "statetemps"),
+              menuItem("Earthquakes",tabName= "earthquakes"),
+             menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker")),
+   
  
 #   menuItem("Data", tabName = "data",icon = icon("database")),
   menuItem("Info", tabName = "info",icon = icon("info")),
@@ -111,6 +113,14 @@ dashboardPage(skin="red",
 #             ))
 #         ),
 # 
+tabItem("statetemps",
+        box(
+            status = "success", solidHeader = TRUE,
+            title = "Latest Temps - Click for value",
+            collapsible = FALSE, collapsed = FALSE,
+            leafletOutput("stateTemps")
+            
+        )),
  tabItem("info",includeMarkdown("info.md"))
 
 ) 
