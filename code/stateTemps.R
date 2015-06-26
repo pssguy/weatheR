@@ -2,6 +2,7 @@
 
 theData <- reactive({
   
+  if (input$sbMenu!="statetemps") return() # otherwise delays other tabs functioning
   # repoll every 10 minutes
   invalidateLater(600000, session)
   

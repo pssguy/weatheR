@@ -14,7 +14,7 @@ getHour = function(data,location,session){
   observe({
     
     if(input$tempScale=="Celsius") {
-    theData()$met_data %>% 
+    theLocData()$met_data %>% 
     filter(year==values$theYear&month==values$theMonth&day==values$theDay) %>% 
     ggvis(~hour,~temp) %>% 
     layer_lines() %>% 
@@ -26,7 +26,7 @@ getHour = function(data,location,session){
     set_options(width=480) %>% 
     bind_shiny("hourly") 
     } else {
-      theData()$met_data %>% 
+      theLocData()$met_data %>% 
         filter(year==values$theYear&month==values$theMonth&day==values$theDay) %>% 
         mutate(temp=temp*9/5-32) %>% 
         ggvis(~hour,~temp) %>% 
@@ -55,13 +55,13 @@ getDay = function(data,location,session){
       observe({
 
   if (input$tempScale=="Celsius") {
-  theData()$met_data %>% 
+  theLocData()$met_data %>% 
     filter(year==values$theYear&month==values$theMonth) %>% 
     group_by(day) %>% 
     summarize(min=min(temp, na.rm=T),max=max(temp, na.rm=T), mean=round(mean(temp, na.rm=T),1)) -> dailyAv
          theTitle<-"temp C"
   } else {
-    theData()$met_data %>% 
+    theLocData()$met_data %>% 
       filter(year==values$theYear&month==values$theMonth) %>% 
       mutate(temp=temp*9/5+32) %>% 
       group_by(day) %>% 
@@ -82,7 +82,7 @@ getDay = function(data,location,session){
     group_by(cats) %>% 
     ggvis(~day,~temp) %>% 
     layer_lines(stroke =~cats) %>% 
-    layer_points(size = 3) %>% 
+    layer_points(size = 5) %>% 
     add_legend(scales="stroke",title="") %>% 
     add_axis("y", title=theTitle) %>% 
     add_axis("x", title="Day of Month") %>% 
@@ -100,6 +100,7 @@ getDay = function(data,location,session){
 output$locations <- renderLeaflet({
 print("enter locations")
  if(is.null(input$country)) return()
+ 
 df <-  allStations %>% 
   
   filter(country_name==input$country&begin<=2013&end==2015)
@@ -123,41 +124,74 @@ output$a<- renderUI({
  # yr2 <- allStations[stationId==input$locations_shape_click$id,]$end
   yr1 <- 2000
   yr2 <-2015
-  sliderInput("years","Select Years",min=yr1,max=yr2,value=c(yr2-3,yr2),sep="",ticks=FALSE)
+  sliderInput("years","Select Years",min=yr1,max=yr2,value=c(yr2-2,yr2),sep="",ticks=FALSE)
                      
 })
 
-theData <- reactive({
+theLocData <- reactive({
   print("enter reactive")
   if (is.null(input$locations_shape_click$id)) return()
   print("station clicked")
   if(is.null(input$years)) return()
   print("inputyears1")
   print(input$years[1])
+  print(input$years[2])
+  
+  year1 <- input$years[1]
+    year2 <- input$years[2]
   
   station <-input$locations_shape_click$id
-
+print(station)
   met_data <- get_isd_station_data(station_id = station,
                                    startyear = input$years[1],
                                    endyear = input$years[2])
 
 # print("data received")
-# print(nrow(met_data))
+print(glimpse(met_data))
    info=list(met_data=met_data)
 #   print("met_data")
    return(info)
   
 })
 
- 
+output$monthTitle <- renderText({
+  if(is.null(theLocData()$met_data)) return()
+  st <- theLocData()$met_data[1]$usaf
+  name <- allStations[allStations$usaf==st,]$name
+  paste0(name,", ",input$country)
+}) 
+
+output$monthTitleA <- renderText({
+  if(is.null(theLocData()$met_data)) return()
+  st <- theLocData()$met_data[1]$usaf
+  name <- allStations[allStations$usaf==st,]$name
+  paste0(name,", ",input$country)
+}) 
+
+output$dayTitle <- renderText({
+  if(is.null(theLocData()$met_data)) return()
+  st <- theLocData()$met_data[1]$usaf
+  name <- allStations[allStations$usaf==st,]$name
+  paste0(values$theMonth," ",values$theYear," ",name,", ",input$country)
+})
+
+
+output$hourTitle <- renderText({
+  if(is.null(theLocData()$met_data)) return()
+  st <- theLocData()$met_data[1]$usaf
+  name <- allStations[allStations$usaf==st,]$name
+  paste0(values$theDay," ",values$theMonth," ",values$theYear," ",name,", ",input$country)
+})
+
+
 observe({
   print("enter monthly")
-  if(is.null(theData()$met_data)) return()
+  if(is.null(theLocData()$met_data)) return()
   print(input$tempScale)
-  print(nrow(theData()$met_data))
+  print(nrow(theLocData()$met_data))
   
   if(input$tempScale=="Celsius") {
-   theData()$met_data %>% 
+   theLocData()$met_data %>% 
       group_by(year) %>% 
       mutate(dayOfYear=row_number(day)) %>% 
       group_by(year,month) %>% 
@@ -165,7 +199,7 @@ observe({
     
    theTitle<-"temp C"
   } else {
-    theData()$met_data %>% 
+    theLocData()$met_data %>% 
       mutate(temp=(temp*9/5+32)) %>% 
       group_by(year) %>% 
       mutate(dayOfYear=row_number(day)) %>% 
@@ -193,17 +227,17 @@ observe({
 
 output$hotColdTable <- DT::renderDataTable({
   
-  if(is.null(theData()$met_data)) return()
+  if(is.null(theLocData()$met_data)) return()
   
   ## table of min/max
-  hottest <- theData()$met_data %>% 
+  hottest <- theLocData()$met_data %>% 
     group_by(year) %>% 
     mutate(maxTemp=max(temp,na.rm=T)) %>% 
     filter(temp==maxTemp) %>% 
     select(year,monthH=month,dayH=day,hourH=hour,tempH=temp) %>% 
     slice(1)
   
-  coldest <- theData()$met_data %>% 
+  coldest <- theLocData()$met_data %>% 
     group_by(year) %>% 
     mutate(minTemp=min(temp,na.rm=T)) %>% 
     filter(temp==minTemp) %>% 
@@ -211,11 +245,11 @@ output$hotColdTable <- DT::renderDataTable({
     slice(1)
   
   ## may not be same for every hour
-  mean <- theData()$met_data %>% 
+  mean <- theLocData()$met_data %>% 
     group_by(year) %>% 
     summarize(avTemp=round(mean(temp,na.rm=T),1))
   
-  meanToDate <- theData()$met_data %>% 
+  meanToDate <- theLocData()$met_data %>% 
     filter(month<7) %>% 
     group_by(year) %>% 
     summarize(avTempYTD=round(mean(temp,na.rm=T),1))
@@ -226,6 +260,7 @@ output$hotColdTable <- DT::renderDataTable({
     inner_join(mean) %>% 
     inner_join(meanToDate) %>% 
     mutate(dateH=paste0(dayH,"-",monthH),dateC=paste0(dayC,"-",monthC)) %>% 
+    arrange(desc(year)) %>% 
     select(year,dateH,tempH,dateC,tempC,av=avTemp,ytd=avTempYTD) %>% 
     DT::datatable(container=temp_format,rownames=FALSE,options=list(paging = FALSE, searching = FALSE,info=FALSE,
                                                                     columnDefs = list(list(className = 'dt-center', targets = c(1,3)))))
@@ -234,10 +269,10 @@ output$hotColdTable <- DT::renderDataTable({
 
 output$hotColdChart <- renderPlot({
   
-  if(is.null(theData()$met_data)) return()
+  if(is.null(theLocData()$met_data)) return()
   print("begin calcs")
   
-  belowZero <-theData()$met_data %>% 
+  belowZero <-theLocData()$met_data %>% 
     filter(month<7) %>% 
     group_by(year,month,day) %>% 
     summarize(min=min(temp, na.rm=T)) %>% 
@@ -249,7 +284,7 @@ output$hotColdChart <- renderPlot({
   print(nrow(belowZero))
   print(glimpse(belowZero))
   
-  aboveTwenty <-theData()$met_data %>% 
+  aboveTwenty <-theLocData()$met_data %>% 
     filter(month<7) %>% 
     group_by(year,month,day) %>% 
     summarize(max=max(temp, na.rm=T)) %>% 

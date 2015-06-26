@@ -8,9 +8,10 @@ dashboardPage(skin="red",
        uiOutput("sb"),
  
   sidebarMenu(id="sbMenu",
-              menuItem("State Capital Temperatures",tabName= "statetemps"),
+             
               menuItem("Earthquakes",tabName= "earthquakes"),
-             menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker")),
+              menuItem("State Capital Temperatures",tabName= "statetemps"),
+             menuItem("Weather Stations", tabName = "stations",icon = icon("map-marker"), selected = TRUE),
    
  
 #   menuItem("Data", tabName = "data",icon = icon("database")),
@@ -50,6 +51,7 @@ dashboardPage(skin="red",
     box(width=12,
       status = "success", solidHeader = TRUE,
       title = "Annual Averages, Highs and Lows",
+      textOutput("monthTitleA"),
       DT::dataTableOutput("hotColdTable")
       
     ),
@@ -75,9 +77,9 @@ dashboardPage(skin="red",
     box(width=12,
 
       status = "success", solidHeader = TRUE,
-      title = "Monthly Temperatures - Click on Point  for Daily Data",
+      title = "Mean Monthly Temperatures - Click on Point  for Daily Data",
       collapsible = TRUE, collapsed = FALSE,
-     
+     textOutput("monthTitle"),
      ggvisOutput("monthly")
       
     ),
@@ -85,6 +87,7 @@ dashboardPage(skin="red",
         status = "success", solidHeader = TRUE,
         title = "Daily Temperatures - Click on Point  for Hourly Data",
         collapsible = TRUE, collapsed = FALSE,
+        textOutput("dayTitle"),
         ggvisOutput("daily")
         
     ),
@@ -92,6 +95,7 @@ dashboardPage(skin="red",
         status = "success", solidHeader = TRUE,
         title = "Hourly Data",
         collapsible = TRUE, collapsed = FALSE,
+        textOutput("hourTitle"),
         ggvisOutput("hourly")
         
     )
@@ -125,6 +129,7 @@ tabItem("statetemps",
           status = "success", solidHeader = TRUE,
           title = "Refreshes automatically every 10 minutes",
           collapsible = FALSE, collapsed = FALSE,
+         
           DT::dataTableOutput("stateTempsTable")
           
         )

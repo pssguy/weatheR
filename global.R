@@ -1,6 +1,7 @@
 # load libraries
 
 library(stationaRy)
+library(weatherData)
 library(dplyr)
 library(ggvis)
 library(tidyr)
